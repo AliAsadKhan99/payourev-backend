@@ -69,7 +69,14 @@ router.patch("/students/:id", async (req, res) => {
   }
 });
 
-router.get("/signup", (req, res, next) => {});
+router.get("/signup", async (req, res, next) => {
+  try {
+    const allSignupData = await Signup.find({});
+    res.send(allSignupData);
+  } catch (err) {
+    res.status(400).send("Invalid data");
+  }
+});
 
 router.post("/signup", async (req, res, next) => {
   try {
