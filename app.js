@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
+const jwt = require("jsonwebtoken");
 dotenv.config({ path: "./config.env" });
 const studentRouter = require("./router/students");
 require("./db/conn");
@@ -16,6 +17,12 @@ app.use(studentRouter);
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+
+// const createToken = async () => {
+//   jwt.sign({}, "");
+// };
+
+// cerateToken();
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

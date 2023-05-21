@@ -4,68 +4,85 @@ const Student = require("../models/students");
 const Signup = require("../models/signup");
 const router = new express.Router();
 
-router.post("/students", async (req, res, next) => {
-  try {
-    const user = new Student(req.body);
-    const createUser = await user.save();
-    res.status(201).send(createUser);
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
+// router.post("/students", async (req, res, next) => {
+//   try {
+//     const user = new Student(req.body);
+//     const createUser = await user.save();
+//     res.status(201).send(createUser);
+//   } catch (e) {
+//     res.status(400).send(e);
+//   }
+// });
 
-// read the data of registered students
-router.get("/students", async (req, res, next) => {
-  try {
-    const studentsData = await Student.find();
-    res.send(studentsData);
-  } catch (e) {
-    res.send(e);
-  }
-});
+// // read the data of registered students
+// router.get("/students", async (req, res, next) => {
+//   try {
+//     const studentsData = await Student.find();
+//     res.send(studentsData);
+//   } catch (e) {
+//     res.send(e);
+//   }
+// });
 
-// get individual student data using id
-router.get("/students/:id", async (req, res, next) => {
+// // get individual student data using id
+// router.get("/students/:id", async (req, res, next) => {
+//   try {
+//     const _id = req.params.id;
+//     const studentData = await Student.findById({ _id: _id });
+//     if (!studentData) {
+//       return res.status(404).send();
+//     } else {
+//       res.send(studentData);
+//     }
+//   } catch (e) {
+//     res.status(500).send(e);
+//   }
+// });
+
+// // delete the students by id
+// router.delete("/students/:id", async (req, res, next) => {
+//   try {
+//     const _id = req.params.id;
+//     const deleteStudent = await Student.findByIdAndDelete({ _id: _id });
+//     if (!_id) {
+//       return res.status(404).send();
+//     }
+
+//     res.send(deleteStudent);
+//   } catch (e) {
+//     res.status(500).send(e);
+//   }
+// });
+
+// // update the students by id
+// router.patch("/students/:id", async (req, res) => {
+//   try {
+//     const _id = req.params.id;
+//     const studentData = await Student.findByIdAndUpdate(
+//       { _id: _id },
+//       req.body,
+//       { new: true }
+//     );
+//     res.send(studentData);
+//   } catch (e) {
+//     res.status(404).send(updateStudents);
+//   }
+// });
+
+router.post("/adminlogin", async (req, res, next) => {
   try {
-    const _id = req.params.id;
-    const studentData = await Student.findById({ _id: _id });
-    if (!studentData) {
-      return res.status(404).send();
-    } else {
-      res.send(studentData);
+    const adminMail = "salmanamir52856@gmail.com";
+    const enteredMail = req.body.email;
+    const password = req.body.password;
+    const userEmail = await Signup.findOne({ email: enteredMail });
+    const isMatch = await bcrypt.compare(password, userEmail.password);
+
+    if (adminMail === enteredMail && isMatch) {
+      const allSignupData = await Signup.find({});
+      res.send(allSignupData);
     }
-  } catch (e) {
-    res.status(500).send(e);
-  }
-});
-
-// delete the students by id
-router.delete("/students/:id", async (req, res, next) => {
-  try {
-    const _id = req.params.id;
-    const deleteStudent = await Student.findByIdAndDelete({ _id: _id });
-    if (!_id) {
-      return res.status(404).send();
-    }
-
-    res.send(deleteStudent);
-  } catch (e) {
-    res.status(500).send(e);
-  }
-});
-
-// update the students by id
-router.patch("/students/:id", async (req, res) => {
-  try {
-    const _id = req.params.id;
-    const studentData = await Student.findByIdAndUpdate(
-      { _id: _id },
-      req.body,
-      { new: true }
-    );
-    res.send(studentData);
-  } catch (e) {
-    res.status(404).send(updateStudents);
+  } catch (err) {
+    res.status(400).send("Invalid data");
   }
 });
 
@@ -108,8 +125,9 @@ router.post("/login", async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     const userEmail = await Signup.findOne({ email: email });
-
     const isMatch = await bcrypt.compare(password, userEmail.password);
+
+    // const adminMail = "salmanamir52856@gmail.com";
 
     if (isMatch) {
       res.send(userEmail.username);
